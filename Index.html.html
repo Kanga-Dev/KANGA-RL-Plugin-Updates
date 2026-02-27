@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KANGA v0.2.1 — Feature Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap');
+
+  :root {
+    --bg: #080c10;
+    --card: #0d1118;
+    --border: #1c2535;
+    --orange: #ff6a1a;
+    --blue: #1a8cff;
+    --teal: #00d4aa;
+    --gold: #f5c842;
+    --red: #ff3b5c;
+    --text: #ccd6e8;
+    --muted: #4a5a70;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Syne', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(26,140,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,140,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo-block {}
+
+  .logo-name {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(120deg, var(--orange) 0%, var(--gold) 60%, #fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-sub {
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .version-badge {
+    background: linear-gradient(135deg, rgba(255,106,26,0.15), rgba(245,200,66,0.08));
+    border: 1px solid rgba(255,106,26,0.3);
+    border-radius: 6px;
+    padding: 10px 20px;
+    text-align: right;
+  }
+
+  .version-badge .ver { font-size: 22px; font-weight: 700; color: var(--orange); }
+  .version-badge .by { font-size: 10px; color: var(--muted); letter-spacing: 0.2em; margin-top: 2px; font-family: 'Syne Mono', monospace; }
+
+  /* SECTION HEADERS */
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title .bar {
+    height: 2px;
+    width: 24px;
+    border-radius: 1px;
+  }
+
+  /* FEATURE GRID */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+  }
+
+  .feat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: default;
+  }
+
+  .feat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .feat:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  .feat .tag {
+    font-family: 'Syne Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    opacity: 0.6;
+  }
+
+  .feat .name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 5px;
+  }
+
+  .feat .desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-family: 'Syne Mono', monospace;
+  }
+
+  /* Color themes per version */
+  .c-orange::before { background: var(--orange); }
+  .c-orange .tag, .c-orange .name { color: var(--orange); }
+
+  .c-blue::before { background: var(--blue); }
+  .c-blue .tag, .c-blue .name { color: var(--blue); }
+
+  .c-teal::before { background: var(--teal); }
+  .c-teal .tag, .c-teal .name { color: var(--teal); }
+
+  .c-gold::before { background: var(--gold); }
+  .c-gold .tag, .c-gold .name { color: var(--gold); }
+
+  .c-red::before { background: var(--red); }
+  .c-red .tag, .c-red .name { color: var(--red); }
+
+  /* STAT ROW */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .stat-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .stat-box .val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .stat-box .lbl {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'Syne Mono', monospace;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .footer .fl { font-family: 'Syne Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+  .footer .fr { font-family: 'Syne Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  .pill {
+    display: inline-block;
+    font-family: 'Syne Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid;
+    margin-left: 4px;
+  }
+
+  .pill-orange { color: var(--orange); border-color: rgba(255,106,26,0.4); background: rgba(255,106,26,0.06); }
+  .pill-blue { color: var(--blue); border-color: rgba(26,140,255,0.4); background: rgba(26,140,255,0.06); }
+  .pill-teal { color: var(--teal); border-color: rgba(0,212,170,0.4); background: rgba(0,212,170,0.06); }
+  .pill-gold { color: var(--gold); border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.06); }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform: translateY(12px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeIn 0.4s ease both; }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.10s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.20s; }
+  .section:nth-child(6) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-block">
+      <div class="logo-name">KANGA</div>
+      <div class="logo-sub">Rocket League Bot · by KangaDev</div>
+    </div>
+    <div class="version-badge">
+      <div class="ver">v0.2.1</div>
+      <div class="by">LATEST RELEASE</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="val">30+</div><div class="lbl">Systems</div></div>
+    <div class="stat-box"><div class="val">6</div><div class="lbl">Archetypes</div></div>
+    <div class="stat-box"><div class="val">6</div><div class="lbl">Possession States</div></div>
+    <div class="stat-box"><div class="val">8K+</div><div class="lbl">Lines of Code</div></div>
+    <div class="stat-box"><div class="val">CarbonX</div><div class="lbl">Plugin Support</div></div>
+  </div>
+
+  <!-- V0.2.1 / V0.2 NEW SYSTEMS -->
+  <div class="section">
+    <div class="section-title">
+      <div class="bar" style="background:var(--orange)"></div>
+      v0.2 New Systems
+      <span class="pill pill-orange">LATEST</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feat c-orange">
+        <div class="tag">BX-1 · Profiler</div>
+        <div class="name">Opponent Archetype Profiler</div>
+        <div class="desc">6-archetype EWMA profiler: insta_challenger, shadow_faker, prejumper, backboard_camper, demo_chaser, boost_starver. Generates demo_warning flag.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">BX-2 · State Machine</div>
+        <div class="name">Possession State Machine</div>
+        <div class="desc">6 states: SECURE / LOOSE / CONTESTED / NEUTRAL / OPPONENT / SCRAMBLE. SCRAMBLE suppresses risky aerials for 0.8s after chaotic multi-touch sequences.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">BX-3 · Tactics</div>
+        <div class="name">Defender Formation Classifier</div>
+        <div class="desc">Reads nearest two opponents, outputs recommended attack: beat_first / cutback / far_side / immediate_shot / default. Wired into attack and close-shot logic.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">BX-6 · Environment</div>
+        <div class="name">Wall Play Detection</div>
+        <div class="desc">is_wall_play(), wall_bounce_target(), wall_pinch_risk(). Prevents incorrect approach angles on wall-played balls.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">BX-7 · Teamwork</div>
+        <div class="name">Teammate Reliability Memory</div>
+        <div class="desc">Tracks overcommit / cut-rotation / good-follow events. Reliability score 0–1. Low score forces deeper holds; high score enables riskier plays.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">BX-8 · Kickoff</div>
+        <div class="name">Kickoff Outcome Classifier</div>
+        <div class="desc">0.5–1.5s post-kickoff window classifies: won_clean / lost_to_net / lost_to_corner / scramble / neutral. Prevents pressing after lost kickoffs.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">BX-9 · Risk</div>
+        <div class="name">Counter-Risk Score</div>
+        <div class="desc">Continuous 0–1 risk metric from four conditions. Suppresses attacks when risk &gt; 0.5; forces retreat when &gt; 0.7.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-2 · Ball Handling</div>
+        <div class="name">Slow Ball Handling</div>
+        <div class="desc">Detects near-stationary ball (speed &lt; 200 uu/s). Reduces approach speed to 900 uu/s for controlled ground shots.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-6 · Shooting</div>
+        <div class="name">Shot Aim Variance</div>
+        <div class="desc">Pseudo-random lateral offset ±150 uu seeded by tick count. Avoids predictable keeper-readable shot placement.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-7 · Defense</div>
+        <div class="name">Demo Evasion Upgrade</div>
+        <div class="desc">Upgraded: fires from 1200 uu (was 700 uu) when opponent heading toward us but not ball. Uses archetype demo_warning; hard steer + handbrake away.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-8 · Challenge</div>
+        <div class="name">Variable Challenge Threshold</div>
+        <div class="desc">Challenge threshold adapts to ball trajectory direction: 0.25 (ball toward opp goal) → 0.60 (rising ball).</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-9 · Aerial</div>
+        <div class="name">Aerial Height Timing</div>
+        <div class="desc">predict_ball_at_height() gives precise time when ball crosses jump-apex z (~700 uu). Used in aerial plugin for tighter jump timing.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-11 · Boost</div>
+        <div class="name">Turn Radius Boost Routing</div>
+        <div class="desc">BoostRouter pad scoring applies turn penalty multiplier when pad angle &gt; 0.4 rad at high speed.</div>
+      </div>
+      <div class="feat c-orange">
+        <div class="tag">IMP-12 · Kickoff</div>
+        <div class="name">Kickoff Spawn Position Classifier</div>
+        <div class="desc">Classifies car spawn from loc.x/loc.y at kickoff. Corner spawns immediately route to big boost pads.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V0.1.5 -->
+  <div class="section">
+    <div class="section-title">
+      <div class="bar" style="background:var(--teal)"></div>
+      v0.1.5 Systems
+      <span class="pill pill-teal">STABLE</span>
+    </div>
+    <div class="feature-grid">
+      <div class="feat c-teal">
+        <div class="tag">[26] · Detection</div>
+        <div class="name">Flip Reset Detector v2</div>
+        <div class="desc">Full physics-based: wheel contact while airborne + ball proximity + velocity delta. Detects ceiling, wall, and aerial resets independently.</div>
+      </div>
+      <div class="feat c-teal">
+        <div class="tag">[27] · Positioning</div>
+        <div class="name">Smart Rotation Engine v3</div>
+        <div class="desc">Proactive rotation to safe positions. Pulls back to optimal position behind ball when no shot/pass opportunity. Avoids ball-chasing and over-commitment.</div>
+      </div>
+      <div class="feat c-teal">
+        <div class="tag">[28] · Boost</div>
+        <div class="name">Aggressive Pad Collection</div>
+        <div class="desc">On-path collection within 350 uu, proactive pad routing when boost &lt; 60, efficiency scoring with road-trip chaining, real-time respawn prediction.</div>
+      </div>
+      <div class="feat c-teal">
+        <div class="tag">[29] · Prediction</div>
+        <div class="name">Trajectory Prediction v2</div>
+        <div class="desc">Multi-bounce lookahead with iterative wall-bounce simulation and 60% coefficient-of-restitution damping. Gravity-integrated 3-second lookahead used everywhere.</div>
+      </div>
+      <div class="feat c-teal">
+        <div class="tag">[30] · Rotation</div>
+        <div class="name">Rotation Back Logic</div>
+        <div class="desc">SUPPORT/DEFENDER role actively retreats to shadow position while collecting pads on the way back (combined routing).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V0.1 -->
+  <div class="section">
+    <div class="section-title">
+      <div class="bar" style="background:var(--blue)"></div>
+      v0.1 Systems
+    </div>
+    <div class="feature-grid">
+      <div class="feat c-blue">
+        <div class="tag">[18] · Intelligence</div>
+        <div class="name">Opponent Profiler</div>
+        <div class="desc">Per-opponent kickoff pattern learning, aerial tendency tracking, aggression style estimation. Feeds counter-kickoffs, aerial challenge prediction, demo-hunting.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[19] · Endgame</div>
+        <div class="name">Clutch System v2</div>
+        <div class="desc">Winning: delay/waste time/boost hoard/fakes. Losing: max aggression/demo-hunt. Tied OT: precision/prejump-saves. States: DEMO_HUNT, TIME_WASTE, CLUTCH_AERIAL.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[20] · Teamwork</div>
+        <div class="name">Team Rotation Engine v2</div>
+        <div class="desc">3-tier STRIKER/SUPPORT/DEFENDER with kinematic ETA. 0.5s rotation lock prevents role oscillation. Committed-teammate detection avoids double challenges.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[21] · Pressure</div>
+        <div class="name">Demo Hunter</div>
+        <div class="desc">When clutch/winning by 2+ goals, targets lowest-boost opponent outside play. Calculates demo intercept vector, aborts when ball becomes urgent.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[22] · Kickoff</div>
+        <div class="name">KickoffFSM v2</div>
+        <div class="desc">Second variant for diagonal positions. Fake-kickoff option against known slow-starters identified via OpponentProfiler.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[23] · Passing</div>
+        <div class="name">Passing System v2</div>
+        <div class="desc">Lane-clear check, lead-pass vector, pressure-triggered auto-pass when enemy is within 600 uu.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[24] · Awareness</div>
+        <div class="name">Threat Score Integration</div>
+        <div class="desc">Field awareness danger_score directly feeds save urgency threshold for dynamic defensive priority.</div>
+      </div>
+      <div class="feat c-blue">
+        <div class="tag">[25] · Deception</div>
+        <div class="name">Fake Challenge System</div>
+        <div class="desc">When our arrival is late and opponent commits, deliberately yields then intercepts the rebound from a better angle.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V0.0.5 CORE INTEGRATIONS -->
+  <div class="section">
+    <div class="section-title">
+      <div class="bar" style="background:var(--gold)"></div>
+      v0.0.5 Core Integrations
+    </div>
+    <div class="feature-grid">
+      <div class="feat c-gold">
+        <div class="tag">[1] · Core</div>
+        <div class="name">SSL Core Brain</div>
+        <div class="desc">All mechanics: rotation, kickoffs, aerials, saves, demos, 50/50s.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[2] · Aerial</div>
+        <div class="name">Aggressive Smart Aerial Plugin v2</div>
+        <div class="desc">Aerial / wall / air-dribble execution plugin.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[3] · Control</div>
+        <div class="name">Control Smoother + Boost Manager</div>
+        <div class="desc">Adaptive smoothing and pad routing for clean mechanical inputs.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[4] · Freestyle</div>
+        <div class="name">Freestyle Control</div>
+        <div class="desc">Advanced aerial combos and freestyle sequences.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[5] · Speed</div>
+        <div class="name">Wavedash FSM</div>
+        <div class="desc">Ground speed maintenance between plays via wavedashing.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[6] · Safety</div>
+        <div class="name">Own-Goal Prevention</div>
+        <div class="desc">Redirect safety check on saves to avoid scoring on own net.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[7] · Boost</div>
+        <div class="name">Post-Kickoff Boost Routing</div>
+        <div class="desc">Grabs nearest big pad immediately after kickoff ends.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[8] · Endgame</div>
+        <div class="name">Clutch Aggression Scaling</div>
+        <div class="desc">Live aggression scaling applied to decision thresholds.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[9] · Mechanics</div>
+        <div class="name">Flip Reset Detection</div>
+        <div class="desc">Enables ceiling/reset freestyle sequences with physics-based detection.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[10] · Tracking</div>
+        <div class="name">Ball History Tracker</div>
+        <div class="desc">Smoothed velocity estimates to reduce bounce noise in ball prediction.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[11] · Humanization</div>
+        <div class="name">Human Layer v1.1</div>
+        <div class="desc">Full EMA smoothing on all axes, deadzone snap, micro-noise, hand tremor simulation, reaction lag, throttle-steer coupling.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[12] · Prediction</div>
+        <div class="name">Ball Contact Predictor</div>
+        <div class="desc">Per-car physics model with field situation awareness for contact timing.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[13] · Switching</div>
+        <div name="name" class="name">Smart Bot Switch FSM v1.1</div>
+        <div class="desc">Triggers on WALL / AERIAL / OVERHEAD / AIR_DRIBBLE. Defense lockout, ctypes SendInput backend.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[14] · Kickoff</div>
+        <div class="name">Kickoff Role Designation</div>
+        <div class="desc">Closest car takes kickoff; support routes to big boost pad. X-position tie-break for equal-distance scenarios.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[15] · Switching</div>
+        <div class="name">Air Hit → Arkangel Switch</div>
+        <div class="desc">Detects aerial ball contact via latest_touch + ball Δv ≥ 200 uu/s. 50% coin-flip → sends K (Arkangel); H (Nexto) on landing. 4s cooldown.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[16] · Awareness</div>
+        <div class="name">3D Field Awareness Engine</div>
+        <div class="desc">Live minimap: per-car 3D position/velocity/heading/boost/aerial. 30-point wall-bounce path (3s lookahead). Goal-mouth 5×3 danger heatmap. First-bounce detection.</div>
+      </div>
+      <div class="feat c-gold">
+        <div class="tag">[17] · Challenge</div>
+        <div class="name">50/50 Engine v1.1</div>
+        <div class="desc">8-factor weighted commit score: arrival_advantage (30%), heading_alignment (20%), speed (15%), boost (10%), ball_trajectory (10%), opponent_heading (10%), sit_score (5%). 3D height check.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="fl">
+      KANGAv0.2.1 · CarbonX / RLBot Compatible
+      <span class="pill pill-orange">CarbonX</span>
+      <span class="pill pill-teal">RLBot</span>
+      <span class="pill pill-gold">CarbonX Legacy</span>
+    </div>
+    <div class="fr">Made by KangaDev</div>
+  </div>
+
+</div>
+</body>
+</html>
